@@ -172,12 +172,12 @@ service.fetchRepo("github","wasp", new CallBack&lt;List&lt;Repo>>{
 <pre class='prettyprint'>
     @GET("/users/repos")
     void fetchRepoBySearch(
-          @QueryMap() Map queryParamsMap,
+          @QueryMap Map queryParamsMap,
           CallBack&lt;Repo> callBack
     );
 </pre>
 <pre class='prettyprint'>
-    Map<String,String> map = new HashMap<>();
+    Map&lt;String,String> map = new HashMap<>();
     map.put("sort","asc");
     map.put("offset", "100");
     
