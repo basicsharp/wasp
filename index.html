@@ -98,7 +98,7 @@ public interface GitHubService {
 <pre class='prettyprint'>
  GitHubService service = new Wasp.Builder(this)    
         .setEndpoint("https://api.github.com")   // Must be set
-        .setLogLevel(LogLevel.ALL)               // Optional, default ALL   
+        .setLogLevel(LogLevel.FULL)              // Optional, default NONE   
         .setParser(new GsonParser())             // Optional, default Gson
         .trustCertificates()                     // Optional
         .enableCookies(CookiePolicy.ACCEPT_ALL)  // Optional
@@ -265,7 +265,7 @@ service.fetchRepo("github","wasp", new CallBack&lt;List&lt;Repo>>{
 <pre class='prettyprint'>
   GitHubService service = new Wasp.Builder(this)    
         .setEndpoint("https://api.github.com")   
-        .setRequestInterceptor(interceptor)        
+        <b>.setRequestInterceptor(interceptor)</b>        
         .build()                        
         .create(MyService.class);   
 </pre>
@@ -283,7 +283,7 @@ service.fetchRepo("github","wasp", new CallBack&lt;List&lt;Repo>>{
        Annotation always override the request interceptor if both are used at the same time
        </p>
 <pre class='prettyprint'>
-    @RetryPolicy(initialTimeout = 1)
+    @RetryPolicy(timeout = 10000)
     @GET("/users")
     void fetchUsers(
           RepoCallBack&lt;List&lt;User>> callBack
@@ -296,7 +296,7 @@ service.fetchRepo("github","wasp", new CallBack&lt;List&lt;Repo>>{
 <pre class='prettyprint'>
   GitHubService service = new Wasp.Builder(this)    
         .setEndpoint("https://api.github.com")   
-        .setHttpStack(new YourHttpStack());       
+        <b>.setHttpStack(new YourHttpStack());</b>       
         .build()                        
         .create(MyService.class);   
 </pre>
@@ -324,9 +324,8 @@ service.fetchRepo("github","wasp", new CallBack&lt;List&lt;Repo>>{
     );
 </pre>
        <p><b>@Mock(path="users.json")</b> : Uses local file to generate mock. Local files must be under assets folder.
-         This will return a response with the generated content by given path, with the status code 200
-       </p>
-       <br>
+         This will return a response with the generated content by given path, with the status code 200 </p>
+         
 <pre class='prettyprint'>
     @Mock(path="user.json")
     @GET("/user")
@@ -358,12 +357,21 @@ service.fetchRepo("github","wasp", new CallBack&lt;List&lt;Repo>>{
      <p>You can easily handle cookies in two ways:</p>
      <ul>
        <li>Set a CookiePolicy and let the CookieManager to use the default CookieStore implementation</li>
+     </ul>
+<pre class='prettyprint'>
+  GitHubService service = new Wasp.Builder(this)    
+        .setEndpoint("https://api.github.com")   
+        <b>.enableCookies(CookiePolicy.ACCEPT_ALL)</b>     
+        .build()                        
+        .create(MyService.class);
+</pre>
+    <ul>
        <li>Provide also your own implementation of CookieStore which will be used by CookieManager</li>
      </ul>
 <pre class='prettyprint'>
   GitHubService service = new Wasp.Builder(this)    
         .setEndpoint("https://api.github.com")   
-        .enableCookies(CookiePolicy.ACCEPT_ALL)     
+        <b>.enableCookies(new YourCookieStore(), CookiePolicy.ACCEPT_ALL)</b>   
         .build()                        
         .create(MyService.class);
 </pre>
