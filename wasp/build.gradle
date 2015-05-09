@@ -23,5 +23,3 @@ dependencies {
     androidTestCompile 'org.assertj:assertj-core:1.7.0'
 
 }
-
-apply from: '../maven_push.gradle'

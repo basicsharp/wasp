@@ -24,9 +24,13 @@ import javax.net.ssl.SSLSocketFactory;
  */
 public class Wasp {
 
-    private static Context context;
+    private Context context;
+    private Parser parser;
     private static LogLevel logLevel;
-    private static Parser parser;
+    private static Parser defaultParser;
+//    private static Context context;
+//    private static LogLevel logLevel;
+//    private static Parser parser;
 
     private final Builder builder;
 
@@ -36,16 +40,17 @@ public class Wasp {
         logLevel = builder.logLevel;
         context = builder.context;
         parser = builder.parser;
+        defaultParser = builder.defaultParser;
     }
 
     /**
      * It is used for the parse operations.
      */
     public static Parser getParser() {
-        if (parser == null) {
+        if (defaultParser == null) {
             throw new NullPointerException("Wasp.Builder must be called first");
         }
-        return parser;
+        return defaultParser;
     }
 
     static LogLevel getLogLevel() {
@@ -71,16 +76,16 @@ public class Wasp {
 
         private static ImageHandler imageHandler;
 
-        public static WaspImage.Builder from(String path) {
+        public static WaspImage.Builder from(Context context, String path) {
             if (TextUtils.isEmpty(path)) {
                 throw new IllegalArgumentException("Path cannot be empty or null");
             }
             return new WaspImage.Builder()
-                    .setImageHandler(getImageHandler())
+                    .setImageHandler(getImageHandler(context.getApplicationContext()))
                     .from(path);
         }
 
-        private static ImageHandler getImageHandler() {
+        private static ImageHandler getImageHandler(Context context) {
             if (context == null) {
                 throw new NullPointerException("Wasp.Builder should be instantiated first");
             }
@@ -112,6 +117,7 @@ public class Wasp {
         private NetworkMode networkMode;
         private Context context;
         private Parser parser;
+        private Parser defaultParser;
         private WaspHttpStack waspHttpStack;
         private RequestInterceptor requestInterceptor;
         private NetworkStack networkStack;
@@ -192,9 +198,15 @@ public class Wasp {
             if (endPointUrl == null) {
                 throw new NullPointerException("Endpoint may not be null");
             }
-            if (parser == null) {
-                parser = new GsonParser();
+            if (defaultParser == null) {
+                defaultParser = new GsonParser();
             }
+            if (parser == null) {
+                parser = defaultParser;
+            }
+//            if (parser == null) {
+//                parser = new GsonParser();
+//            }
             if (logLevel == null) {
                 logLevel = LogLevel.NONE;
             }
@@ -252,6 +264,14 @@ public class Wasp {
                 throw new NullPointerException("Parser may not be null");
             }
             this.parser = parser;
+            return this;
+        }
+
+        public Builder setDefaultParser(Parser parser) {
+            if (parser == null) {
+                throw new NullPointerException("Parser may not be null");
+            }
+            this.defaultParser = parser;
             return this;
         }
 
